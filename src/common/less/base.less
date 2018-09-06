@@ -1,0 +1,95 @@
+@charset "utf-8";
+/*
+@名称: base
+@功能: 重设浏览器默认样式
+*/
+/* 防止用户自定义背景颜色对网页的影响，添加让用户可以自定义字体 */
+html {
+  color:rgba(0,0,0,.8);
+}
+/* 内外边距通常让各个浏览器样式的表现位置不同 */
+body,ul,ol,li,h1,h2,h3,h4,h5,h6,form,input,textarea,p,th,td,hr,button,footer,header{
+  margin:0;
+  padding:0;
+}
+/* 要注意表单元素并不继承父级 font 的问题 */
+body,button,input,select,textarea {
+  //font:12px/1.5 Microsoft YaHei,tahoma,arial,Hiragino Sans GB,\\5b8b\4f53,sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+  -webkit-font-smoothing: antialiased;/*这个属性可以使页面上的字体抗锯齿,使用后字体看起来会
+  更清晰舒服*/
+}
+/* 去掉各Table cell 的边距并让其边重合 */
+table {
+  border-collapse:collapse;
+  border-spacing:0;
+}
+/* IE bug fixed: th 不继承 test-align*/
+th {
+  text-align:inherit;
+}
+/* ie6 7 8(q) bug 显示为行内表现 */
+iframe {
+  display:block;
+}
+/* 去掉列表前的标识, li 会继承 */
+ol,ul {
+  list-style:none;
+}
+/* 让链接在 hover 状态下显示下划线 */
+a:hover {
+  /*test-decoration:underline;*/
+  text-decoration:none;
+}
+a:active{
+text-decoration:none;
+}
+/* 默认不显示下划线，保持页面简洁 */
+a {
+  text-decoration:none;
+}
+/* IE6,7焦点点状线去除 */
+a:focus,*:focus {
+  outline:none;
+}
+/* 清除浮动 */
+.clearfix:before,.clearfix:after {
+  content:"";
+  display:table;
+}
+.clearfix:after {
+  clear:both;
+  overflow:hidden;
+}
+.clearfix {
+  zoom:1; /* for IE6 IE7 */
+}
+.clear{
+  clear:both;
+  display:block;
+  overflow:hidden;
+}
+/* 设置显示和隐藏, 通常用来与 JS 配合 */
+.hide {
+  display:none !important;
+  visibility:hidden;
+}
+.block {
+  display:block !important;
+}
+/* 设置内联, 减少浮动带来的bug */
+.fl {
+  float:left;
+  display:inline;
+}
+.fr {
+  float:right;
+  display:inline;
+}
+
+/**
+ * Remove the border on images inside links in IE 10.
+ */
+img {
+  border-style: none;
+}
