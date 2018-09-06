@@ -75,6 +75,7 @@ export default {
       border: 1px solid @color-border;
       i {
         font-size: 18px;
+        color: @color-gray;
       }
       input {
         flex: 1;
