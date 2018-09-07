@@ -17,7 +17,7 @@ export function musicDate (lis) {
       songName: v.songname,
       albumname: v.albumname,
       singerName: v.singer[0].name,
-      vkeyUrl: `http://dl.stream.qqmusic.qq.com/${v.filename}?vkey=${v.vkey}&guid=7748797702&uin=1546302993&fromtag=66`
+      songmid: v.songmid
     })
   })
 

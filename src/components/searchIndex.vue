@@ -6,11 +6,19 @@
         <input type="text" v-model="query">
       </div>
     </div>
-    <ul class="content-list">
-      <li>
-        <img src="" alt="">
+    <ul class="content-list" v-if="result.length">
+      <li v-for="item in result">
+        <div class="imgs-wrapper">
+          <img :src="item.img" alt="">
+          <i @click="play(item.songmid)" class="iconfont">&#xe626;</i>
+        </div>
+        <div class="desc">
+          <p>{{item.songName}}</p>
+          <p>{{item.singerName}}&emsp;{{item.albumname}}</p>
+        </div>
       </li>
     </ul>
+    <audio ref="audio" v-if="vkeyUrl" :src="vkeyUrl"></audio>
   </div>
 </template>
 
@@ -25,6 +33,7 @@ export default {
       query: '',
       page: 1,
       result: '',
+      vkeyUrl: '',
       showSinger: {
         type: Boolean,
         default: true
@@ -34,25 +43,19 @@ export default {
   created () {
     this.$watch('query', debounce((v) => {
       search(v, this.page, this.showSinger, 20).then((res) => {
-//        console.log(res)
-        var proList = this._normalize(res.data.song.list)
-        console.log(proList)
-        setTimeout(() => {
-          this.result = musicDate(proList)
-//          console.log(this.result)
-        }, 200)
+        this.result = musicDate(res.data.song.list)
+        console.log(this.result)
       })
     }, 200))
   },
   methods: {
-    _normalize (list) {
-      list.forEach((v) => {
-        getVkey(v.songmid).then((res) => {
-          v.vkey = res.data.items[0].vkey
-          v.filename = res.data.items[0].filename
-        })
+    play (mid) {
+      getVkey(mid).then((res) => {
+        var vkey = res.data.items[0].vkey
+        var filename = res.data.items[0].filename
+        this.vkeyUrl = `http://dl.stream.qqmusic.qq.com/${filename}?vkey=${vkey}&guid=7748797702&uin=1546302993&fromtag=66`
       })
-      return list
+      this.vkeyUrl && this.$refs.audio.play()
     }
   }
 }
@@ -82,6 +85,46 @@ export default {
         border: 0;
         padding: 5px;
         font-size: @font-size-medium;
+      }
+    }
+  }
+  .content-list{
+    padding: 15px 15px 0;
+    li{
+      margin-bottom: 10px;
+      .flex();
+      .imgs-wrapper{
+        width: 60px;
+        height: 60px;
+        position: relative;
+        img{
+          width: 100%;
+          height: 100%;
+        }
+        i{
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          font-size: 25px;
+          color: #fff;
+          .translate(-50%, -50%, 0);
+        }
+      }
+      .desc{
+        height: 60px;
+        padding-left: 10px;
+        ._flex();
+        flex: 1;
+        flex-direction: column;
+        justify-content: space-around;
+        p{
+          &:nth-child(1){
+            font-size: @font-size-large;
+          }
+          &:nth-child(2){
+            font-size: @font-size-small;
+          }
+        }
       }
     }
   }
