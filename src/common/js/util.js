@@ -17,7 +17,8 @@ export function musicDate (lis) {
       songName: v.songname,
       albumname: v.albumname,
       singerName: v.singer[0].name,
-      songmid: v.songmid
+      songmid: v.songmid,
+      playStatus: false
     })
   })
 

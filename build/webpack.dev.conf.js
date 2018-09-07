@@ -50,6 +50,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     watchOptions: {
       poll: config.dev.poll,
     },
+    disableHostCheck: true,
     before(apiRoutes) {
       apiRoutes.get('/api/search', function (req, res) {
         var url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'

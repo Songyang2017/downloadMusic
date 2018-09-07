@@ -2,23 +2,24 @@
   <div class="box-wrapper">
     <div class="content-box">
       <div class="search-box">
-        <i class="iconfont">&#xe63b;</i>
+        <i class="iconfont icon-search"></i>
         <input type="text" v-model="query">
       </div>
     </div>
     <ul class="content-list" v-if="result.length">
-      <li v-for="item in result">
+      <li v-for="item in result" :key="item.songmid">
         <div class="imgs-wrapper">
-          <img :src="item.img" alt="">
-          <i @click="play(item.songmid)" class="iconfont">&#xe626;</i>
+          <img v-lazy="item.img" alt="">
+          <div class="mask-wrap"></div>
+          <i @click="play(item)" :class="[item.playStatus?playIcon:pauseIcon]" class="iconfont"></i>
         </div>
         <div class="desc">
-          <p>{{item.songName}}</p>
-          <p>{{item.singerName}}&emsp;{{item.albumname}}</p>
+          <p v-html="item.songName"></p>
+          <p><span v-html="item.singerName"></span>&emsp;<span v-html="item.albumname"></span></p>
         </div>
       </li>
     </ul>
-    <audio ref="audio" v-if="vkeyUrl" :src="vkeyUrl"></audio>
+    <audio ref="audio"></audio>
   </div>
 </template>
 
@@ -33,11 +34,9 @@ export default {
       query: '',
       page: 1,
       result: '',
-      vkeyUrl: '',
-      showSinger: {
-        type: Boolean,
-        default: true
-      }
+      showSinger: true,
+      pauseIcon: 'icon-bofang',
+      playIcon: 'icon-zanting'
     }
   },
   created () {
@@ -46,16 +45,31 @@ export default {
         this.result = musicDate(res.data.song.list)
         console.log(this.result)
       })
-    }, 200))
+    }, 500))
   },
   methods: {
-    play (mid) {
-      getVkey(mid).then((res) => {
-        var vkey = res.data.items[0].vkey
-        var filename = res.data.items[0].filename
-        this.vkeyUrl = `http://dl.stream.qqmusic.qq.com/${filename}?vkey=${vkey}&guid=7748797702&uin=1546302993&fromtag=66`
+    play (its) {
+      this.result.forEach((v) => {
+        if (v.songmid !== its.songmid) {
+          v.playStatus = false
+        }
       })
-      this.vkeyUrl && this.$refs.audio.play()
+
+      its.playStatus = !its.playStatus
+      console.log(its)
+      if (its.playStatus) {
+        getVkey(its.songmid).then((res) => {
+          var vkey = res.data.items[0].vkey
+          var filename = res.data.items[0].filename
+          this.$refs.audio.src = `http://dl.stream.qqmusic.qq.com/${filename}?vkey=${vkey}&guid=7748797702&uin=1546302993&fromtag=66`
+        })
+
+        this.$refs.audio.oncanplay = () => {
+          this.$refs.audio.play()
+        }
+      } else {
+        this.$refs.audio.pause()
+      }
     }
   }
 }
@@ -101,6 +115,15 @@ export default {
           width: 100%;
           height: 100%;
         }
+        .mask-wrap{
+          position: absolute;
+          left: 0;
+          top: 0;
+          background-color: rgba(0,0,0,.2);
+          height: 100%;
+          width: 100%;
+          z-index: 5;
+        }
         i{
           position: absolute;
           left: 50%;
@@ -108,6 +131,7 @@ export default {
           font-size: 25px;
           color: #fff;
           .translate(-50%, -50%, 0);
+          z-index: 10;
         }
       }
       .desc{
@@ -120,6 +144,7 @@ export default {
         p{
           &:nth-child(1){
             font-size: @font-size-large;
+            .no-wrap();
           }
           &:nth-child(2){
             font-size: @font-size-small;
