@@ -61,7 +61,12 @@ export default {
         getVkey(its.songmid).then((res) => {
           var vkey = res.data.items[0].vkey
           var filename = res.data.items[0].filename
-          this.$refs.audio.src = `http://dl.stream.qqmusic.qq.com/${filename}?vkey=${vkey}&guid=7748797702&uin=1546302993&fromtag=66`
+          if (vkey) {
+            this.$refs.audio.src = `http://dl.stream.qqmusic.qq.com/${filename}?vkey=${vkey}&guid=7748797702&uin=1546302993&fromtag=66`
+          } else {
+            alert('暂无该歌曲版权！')
+            its.playStatus = false
+          }
         })
 
         this.$refs.audio.oncanplay = () => {

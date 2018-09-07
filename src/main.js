@@ -6,12 +6,10 @@ import VueLazyload from 'vue-lazyload'
 import router from './router'
 
 Vue.config.productionTip = false
-Vue.use(VueLazyload)
 
 Vue.use(VueLazyload, {
-  preLoad: 1.3,
-  error: '@/assets/bg-icon.png',
-  loading: '@/assets/bg-icon.png',
+  error: './assets/bg-icon.png',
+  loading: './assets/bg-icon.png',
   attempt: 1
 })
 
