@@ -20,7 +20,9 @@ export default {
     -webkit-text-stroke-width: 0.2px;
     -moz-osx-font-smoothing: grayscale;
   }
-
+  html, body, #app{
+    height: 100%;
+  }
   body{
     background-color: #F8FAFE;
   }

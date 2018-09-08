@@ -18,9 +18,20 @@ export function musicDate (lis) {
       albumname: v.albumname,
       singerName: v.singer[0].name,
       songmid: v.songmid,
-      playStatus: false
+      playStatus: false,
+      fileName: `${v.songname}.m4a`
     })
   })
 
   return list
+}
+
+export function isWexin () {
+  let ua = navigator.userAgent.toLowerCase()
+  let isWeixin = ua.indexOf('micromessenger') !== -1
+  if (isWeixin) {
+    return true
+  } else {
+    return false
+  }
 }

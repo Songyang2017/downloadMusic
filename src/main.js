@@ -8,9 +8,8 @@ import router from './router'
 Vue.config.productionTip = false
 
 Vue.use(VueLazyload, {
-  error: './assets/bg-icon.png',
-  loading: './assets/bg-icon.png',
-  attempt: 1
+  error: require('assets/bg-icon.png'),
+  loading: require('assets/bg-icon.png')
 })
 
 /* eslint-disable no-new */

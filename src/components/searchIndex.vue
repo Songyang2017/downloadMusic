@@ -1,25 +1,36 @@
 <template>
   <div class="box-wrapper">
-    <div class="content-box">
-      <div class="search-box">
-        <i class="iconfont icon-search"></i>
-        <input type="text" v-model="query">
+    <div class="wrapper-content">
+      <div class="content-box">
+        <div class="search-box">
+          <i class="iconfont icon-search"></i>
+          <input type="text" v-model="query">
+        </div>
       </div>
+      <ul class="content-list" v-if="result.length">
+        <li v-for="item in result" :key="item.songmid">
+          <div class="imgs-wrapper">
+            <img v-lazy="item.img" alt="">
+            <div class="mask-wrap"></div>
+            <i @click="play(item)" :class="[item.playStatus?playIcon:pauseIcon]" class="iconfont"></i>
+          </div>
+          <div class="desc">
+            <p v-html="item.songName"></p>
+            <p><span v-html="item.singerName"></span>&emsp;<span v-html="item.albumname"></span></p>
+          </div>
+          <div class="diwnload-icon" @click="getUrl(item, true)">
+            <i class="iconfont icon-download"></i>
+          </div>
+        </li>
+      </ul>
     </div>
-    <ul class="content-list" v-if="result.length">
-      <li v-for="item in result" :key="item.songmid">
-        <div class="imgs-wrapper">
-          <img v-lazy="item.img" alt="">
-          <div class="mask-wrap"></div>
-          <i @click="play(item)" :class="[item.playStatus?playIcon:pauseIcon]" class="iconfont"></i>
-        </div>
-        <div class="desc">
-          <p v-html="item.songName"></p>
-          <p><span v-html="item.singerName"></span>&emsp;<span v-html="item.albumname"></span></p>
-        </div>
-      </li>
-    </ul>
-    <audio ref="audio"></audio>
+    <transition name="fade">
+      <div class="mask" v-show="popShow" @click="popShow = !popShow">
+        <dia-log :img="img" :down-url="downUrl" :file-name="fileName"></dia-log>
+      </div>
+    </transition>
+    <wx-mask></wx-mask>
+    <audio ref="audio" :src="vkeyUrl"></audio>
   </div>
 </template>
 
@@ -27,6 +38,8 @@
 import {search} from 'api/search'
 import {debounce, musicDate} from 'common/js/util'
 import {getVkey} from 'api/vkey'
+import diaLog from '@/components/dialog'
+import wxMask from '@/components/wxMask'
 
 export default {
   data () {
@@ -34,9 +47,14 @@ export default {
       query: '',
       page: 1,
       result: '',
+      vkeyUrl: '',
+      downUrl: '',
       showSinger: true,
+      popShow: false,
       pauseIcon: 'icon-bofang',
-      playIcon: 'icon-zanting'
+      playIcon: 'icon-zanting',
+      img: '',
+      fileName: ''
     }
   },
   created () {
@@ -46,6 +64,10 @@ export default {
         console.log(this.result)
       })
     }, 500))
+  },
+  components: {
+    diaLog,
+    wxMask
   },
   methods: {
     play (its) {
@@ -58,23 +80,35 @@ export default {
       its.playStatus = !its.playStatus
       console.log(its)
       if (its.playStatus) {
-        getVkey(its.songmid).then((res) => {
-          var vkey = res.data.items[0].vkey
-          var filename = res.data.items[0].filename
-          if (vkey) {
-            this.$refs.audio.src = `http://dl.stream.qqmusic.qq.com/${filename}?vkey=${vkey}&guid=7748797702&uin=1546302993&fromtag=66`
-          } else {
-            alert('暂无该歌曲版权！')
-            its.playStatus = false
-          }
-        })
-
+        this.getUrl(its)
         this.$refs.audio.oncanplay = () => {
           this.$refs.audio.play()
         }
       } else {
         this.$refs.audio.pause()
       }
+    },
+    getUrl (its, down) {
+      getVkey(its.songmid).then((res) => {
+        var vkey = res.data.items[0].vkey
+        var filename = res.data.items[0].filename
+        if (vkey) {
+          var url = `http://dl.stream.qqmusic.qq.com/${filename}?vkey=${vkey}&guid=7748797702&uin=1546302993&fromtag=66`
+          if (down) {
+            this.downUrl = url
+            this.img = its.img
+            this.fileName = its.fileName
+            this.popShow = true
+          } else {
+            if (this.vkeyUrl !== url) {
+              this.vkeyUrl = url
+            }
+          }
+        } else {
+          alert('暂无该歌曲版权！')
+          its.playStatus = false
+        }
+      })
     }
   }
 }
@@ -85,6 +119,13 @@ export default {
   @import '~common/less/common';
   @import '~common/less/variable';
 
+  .box-wrapper{
+    height: 100%;
+    .wrapper-content{
+      height: 100%;
+      overflow: auto;
+    }
+  }
   .content-box {
     padding: 0;
     .search-box {
@@ -142,6 +183,7 @@ export default {
       .desc{
         height: 60px;
         padding-left: 10px;
+        overflow: hidden;
         ._flex();
         flex: 1;
         flex-direction: column;
@@ -153,7 +195,16 @@ export default {
           }
           &:nth-child(2){
             font-size: @font-size-small;
+            .no-wrap();
           }
+        }
+      }
+      .diwnload-icon{
+        padding: 0 5px;
+        cursor: pointer;
+        i{
+          font-size: 28px;
+          color: @color-brown;
         }
       }
     }
