@@ -32,7 +32,7 @@ export default {
     pullup: {
       type: Boolean,
       default: false
-    }
+    },
   },
   mounted () {
     setTimeout(() => {
