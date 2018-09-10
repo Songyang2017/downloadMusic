@@ -1,6 +1,6 @@
 <template>
   <div v-show="flag" class="show-wrapper">
-    <img src="../assets/laugh.jpg" alt="">
+    <img src="../assets/wxShow.png" alt="">
     <div><img src="../assets/tip.png" alt=""></div>
   </div>
 </template>
