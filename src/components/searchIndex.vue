@@ -1,28 +1,40 @@
 <template>
   <div class="box-wrapper">
-    <div class="wrapper-content">
+    <div class="header">
+      <div class="text">
+        <i class="iconfont icon-yinle"></i>
+        <p>MinMus - 随心而动</p>
+      </div>
       <div class="content-box">
         <div class="search-box">
           <i class="iconfont icon-search"></i>
           <input type="text" v-model="query">
         </div>
       </div>
-      <ul class="content-list" v-if="result.length">
-        <li v-for="item in result" :key="item.songmid">
-          <div class="imgs-wrapper">
-            <img v-lazy="item.img" alt="">
-            <div class="mask-wrap"></div>
-            <i @click="play(item)" :class="[item.playStatus?playIcon:pauseIcon]" class="iconfont"></i>
-          </div>
-          <div class="desc">
-            <p v-html="item.songName"></p>
-            <p><span v-html="item.singerName"></span>&emsp;<span v-html="item.albumname"></span></p>
-          </div>
-          <div class="diwnload-icon" @click="getUrl(item, true)">
-            <i class="iconfont icon-download"></i>
-          </div>
-        </li>
-      </ul>
+    </div>
+    <scroll :data="result" class="wrapper-content" :pullup="true" @scrollToEnd="loadMore">
+      <div>
+        <ul class="content-list" v-if="result.length">
+          <li v-for="item in result" :key="item.songmid">
+            <div class="imgs-wrapper">
+              <img v-lazy="item.img" alt="">
+              <div class="mask-wrap"></div>
+              <i @click="play(item)" :class="[item.playStatus?playIcon:pauseIcon]" class="iconfont"></i>
+            </div>
+            <div class="desc">
+              <p v-html="item.songName"></p>
+              <p><span v-html="item.singerName"></span>&emsp;<span v-html="item.albumname"></span></p>
+            </div>
+            <div class="diwnload-icon" @click="getUrl(item, true)">
+              <i class="iconfont icon-download"></i>
+            </div>
+          </li>
+          <li v-show="loadFlag" class="loading-more"><div class="loading-block"></div>Loading...</li>
+        </ul>
+      </div>
+    </scroll>
+    <div class="empty-wrapper" v-show="!result.length">
+      <img src="../assets/leaf.png" alt="">
     </div>
     <transition name="fade">
       <div class="mask" v-show="popShow" @click="popShow = !popShow">
@@ -33,11 +45,11 @@
     <audio ref="audio" :src="vkeyUrl"></audio>
   </div>
 </template>
-
 <script>
 import {search} from 'api/search'
 import {debounce, musicDate} from 'common/js/util'
 import {getVkey} from 'api/vkey'
+import Scroll from '@/components/base/scroll'
 import diaLog from '@/components/dialog'
 import wxMask from '@/components/wxMask'
 
@@ -46,7 +58,7 @@ export default {
     return {
       query: '',
       page: 1,
-      result: '',
+      result: [],
       vkeyUrl: '',
       downUrl: '',
       showSinger: true,
@@ -54,22 +66,32 @@ export default {
       pauseIcon: 'icon-bofang',
       playIcon: 'icon-zanting',
       img: '',
-      fileName: ''
+      fileName: '',
+      loadFlag: false
     }
   },
   created () {
     this.$watch('query', debounce((v) => {
+      this.page = 1
       search(v, this.page, this.showSinger, 20).then((res) => {
         this.result = musicDate(res.data.song.list)
-        console.log(this.result)
       })
-    }, 500))
+    }, 300))
   },
   components: {
     diaLog,
-    wxMask
+    wxMask,
+    Scroll
   },
   methods: {
+    loadMore () {
+      this.loadFlag = true
+      this.page++
+      search(this.query, this.page, this.showSinger, 20).then((res) => {
+        this.result = this.result.concat(musicDate(res.data.song.list))
+        this.loadFlag = false
+      })
+    },
     play (its) {
       this.result.forEach((v) => {
         if (v.songmid !== its.songmid) {
@@ -78,7 +100,6 @@ export default {
       })
 
       its.playStatus = !its.playStatus
-      console.log(its)
       if (its.playStatus) {
         this.getUrl(its)
         this.$refs.audio.oncanplay = () => {
@@ -121,29 +142,50 @@ export default {
 
   .box-wrapper{
     height: 100%;
+    font-size: 0;
+    ._flex();
+    flex-direction: column;
+    .header{
+      width: 100%;
+      .text{
+        padding: 15px 0;
+        .flex();
+        justify-content: center;
+        i{
+          font-size: 20px;
+          color: #f45d5d;
+        }
+        p{
+          margin-left: 3px;
+          font-size: 16px;
+          font-weight: 400;
+        }
+      }
+    }
     .wrapper-content{
-      height: 100%;
-      overflow: auto;
+      overflow: hidden;
     }
   }
   .content-box {
-    padding: 0;
+    flex:1;
+    padding: 5px 0;
+    background: #fff;
     .search-box {
       .flex();
       font-size: 0;
-      margin: 50px 10px 0;
-      padding: 5px;
-      background-color: #fff;
+      margin: 0 10px;
+      padding: 5px 5px 5px 10px;
+      background-color: #f1f1f1;
       border-radius: 5px;
-      border: 1px solid @color-border;
       i {
-        font-size: 18px;
+        font-size: 15px;
         color: @color-gray;
       }
       input {
         flex: 1;
         border: 0;
-        padding: 5px;
+        padding: 2px 6px;
+        background-color: transparent;
         font-size: @font-size-medium;
       }
     }
@@ -207,6 +249,24 @@ export default {
           color: @color-brown;
         }
       }
+    }
+    .loading-more{
+      ._flex();
+      justify-content: center;
+      font-size: @font-size-medium;
+      .loading-block{
+        width: 22px;
+        height: 22px;
+        margin-right: 3px;
+        .loading-bg();
+      }
+    }
+  }
+  .empty-wrapper{
+    margin: 70px auto 0;
+    width: 80%;
+    img{
+      width: 100%;
     }
   }
 </style>

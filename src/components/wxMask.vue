@@ -31,7 +31,7 @@ export default {
     div{
       img{
         padding-top: 15px;
-        width: 40%;
+        width: 65%;
       }
     }
     img{
