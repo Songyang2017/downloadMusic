@@ -32,7 +32,7 @@ export default {
     pullup: {
       type: Boolean,
       default: false
-    },
+    }
   },
   mounted () {
     setTimeout(() => {
@@ -77,7 +77,7 @@ export default {
     },
     scrollToElement () {
       this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
-    },
+    }
   },
   watch: {
     data () {
