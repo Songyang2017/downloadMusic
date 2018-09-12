@@ -8,7 +8,7 @@
       <div class="content-box">
         <div class="search-box">
           <i class="iconfont icon-search"></i>
-          <input type="text" v-model="query">
+          <input type="text" autocomplete="off" v-model="query" placeholder="关键词">
         </div>
       </div>
     </div>
@@ -34,7 +34,7 @@
       </div>
     </scroll>
     <div class="empty-wrapper" v-show="!result.length">
-      <img src="../assets/leaf.png" alt="">
+      <img class="blank" src="../assets/blank.png" alt="">
     </div>
     <transition name="fade">
       <div class="mask" v-show="popShow" @click="popShow = !popShow">
@@ -67,7 +67,8 @@ export default {
       playIcon: 'icon-zanting',
       img: '',
       fileName: '',
-      loadFlag: false
+      loadFlag: false,
+      totalnum: null
     }
   },
   created () {
@@ -75,6 +76,7 @@ export default {
       this.page = 1
       search(v, this.page, this.showSinger, 20).then((res) => {
         this.result = musicDate(res.data.song.list)
+        this.totalnum = res.data.song.totalnum
       })
     }, 300))
   },
@@ -85,6 +87,9 @@ export default {
   },
   methods: {
     loadMore () {
+      if (this.result.length === this.totalnum) {
+        return
+      }
       this.loadFlag = true
       this.page++
       search(this.query, this.page, this.showSinger, 20).then((res) => {
@@ -138,7 +143,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
   @import '~common/less/common';
-  @import '~common/less/variable';
 
   .box-wrapper{
     height: 100%;
@@ -263,9 +267,10 @@ export default {
     }
   }
   .empty-wrapper{
-    margin: 70px auto 0;
-    width: 80%;
-    img{
+    margin: 50px auto 0;
+    width: 75%;
+    text-align: center;
+    .blank{
       width: 100%;
     }
   }
