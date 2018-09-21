@@ -1,12 +1,12 @@
 <template>
-  <div class="dialog-content">
-    <div class="content-box">
-      <div class="box-img"><img width="100%" :src="img" alt=""></div>
-      <a :href="downUrl" :download="fileName" class="download">
-        <i class="iconfont icon-download"></i>
-      </a>
+  <transition name="fade">
+    <div class="dialog-content">
+      <div class="content-box">
+        <slot></slot>
+        <div class="close" @click="closeTim"><i class="iconfont icon-guanbi"></i></div>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -24,6 +24,11 @@ export default {
       type: String,
       default: ''
     }
+  },
+  methods: {
+    closeTim () {
+      this.$emit('closeTim')
+    }
   }
 }
 </script>
@@ -34,29 +39,25 @@ export default {
 
   .dialog-content {
     .content-box {
+      box-shadow: 0 0px 24px 2px rgba(0, 0, 0, 0.5);
       border-radius: 4px;
       position: absolute;
       left: 50%;
       top: 50%;
-      width: 80vw;
-      height: 80vw;
+      width: 70vw;
       background-color: #fff;
       .translate(-50%, -50%, 0);
       z-index:20;
-      ._flex();
-      flex-direction: column;
-      justify-content: space-around;
-      .box-img{
-        margin: 0 auto;
-        width: 70%;
-      }
-      .download{
-        display: block;
-        text-align: center;
-        i{
-          font-size: 28px;
-          color: #833b10;
-        }
+    }
+    .close{
+      position: absolute;
+      top: 5px;
+      right:5px;
+      font-size: 0;
+      z-index: 101;
+      i{
+        color: #fff;
+        font-size: 16px;
       }
     }
   }

@@ -1,15 +1,10 @@
 <template>
   <div class="box-wrapper">
-    <div class="header">
-      <div class="text">
-        <i class="iconfont icon-yinle"></i>
-        <p>MinMus - 随心而动</p>
-      </div>
-      <div class="content-box">
-        <div class="search-box">
-          <i class="iconfont icon-search"></i>
-          <input type="text" autocomplete="off" v-model="query" placeholder="关键词">
-        </div>
+    <head-title title="MinMus - 随心而动"></head-title>
+    <div class="content-box">
+      <div class="search-box">
+        <i class="iconfont icon-search"></i>
+        <input type="text" autocomplete="off" v-model="query" placeholder="关键词">
       </div>
     </div>
     <scroll :data="result" class="wrapper-content" :pullup="true" @scrollToEnd="loadMore">
@@ -26,7 +21,7 @@
               <p><span v-html="item.singerName"></span>&emsp;<span v-html="item.albumname"></span></p>
             </div>
             <div class="diwnload-icon" @click="getUrl(item, true)">
-              <i class="iconfont icon-download"></i>
+              <img class="download-img" src="../assets/bird.png" alt="">
             </div>
           </li>
           <li v-show="loadFlag" class="loading-more"><div class="loading-block"></div>Loading...</li>
@@ -34,24 +29,26 @@
       </div>
     </scroll>
     <div class="empty-wrapper" v-show="!result.length">
-      <img class="blank" src="../assets/blank.png" alt="">
+      <img class="blank" src="../assets/rabbit.png" alt="">
     </div>
-    <transition name="fade">
-      <div class="mask" v-show="popShow" @click="popShow = !popShow">
-        <dia-log :img="img" :down-url="downUrl" :file-name="fileName"></dia-log>
+    <dia-log v-show="popShow" @closeTim="cloaeDiaLog">
+      <div class="box-img" :style="{backgroundImage: 'url('+img+')'}">
+        <div class="mask"><div class="box-song-name"><p>{{songName}}</p><p>{{singerName}}</p></div></div>
       </div>
-    </transition>
+      <a :href="downUrl" :download="fileName" class="download">下&nbsp;载</a>
+    </dia-log>
     <wx-mask></wx-mask>
     <audio ref="audio" :src="vkeyUrl"></audio>
   </div>
 </template>
 <script>
-import {search} from 'api/search'
 import {debounce, musicDate} from 'common/js/util'
-import {getVkey} from 'api/vkey'
 import Scroll from '@/components/base/scroll'
-import diaLog from '@/components/dialog'
-import wxMask from '@/components/wxMask'
+import diaLog from '@/components/base/dialog'
+import wxMask from '@/components/base/wxMask'
+import headTitle from '@/components/headTitle'
+import {search} from 'api/search'
+import {getVkey} from 'api/vkey'
 
 export default {
   data () {
@@ -67,6 +64,8 @@ export default {
       playIcon: 'icon-zanting',
       img: '',
       fileName: '',
+      songName: '',
+      singerName: '',
       loadFlag: false,
       totalnum: null
     }
@@ -83,7 +82,8 @@ export default {
   components: {
     diaLog,
     wxMask,
-    Scroll
+    Scroll,
+    headTitle
   },
   methods: {
     loadMore () {
@@ -115,6 +115,7 @@ export default {
       }
     },
     getUrl (its, down) {
+      // console.log(its)
       getVkey(its.songmid).then((res) => {
         var vkey = res.data.items[0].vkey
         var filename = res.data.items[0].filename
@@ -123,7 +124,9 @@ export default {
           if (down) {
             this.downUrl = url
             this.img = its.img
+            this.songName = its.songName
             this.fileName = its.fileName
+            this.singerName = its.singerName
             this.popShow = true
           } else {
             if (this.vkeyUrl !== url) {
@@ -135,6 +138,9 @@ export default {
           its.playStatus = false
         }
       })
+    },
+    cloaeDiaLog () {
+      this.popShow = false
     }
   }
 }
@@ -171,7 +177,6 @@ export default {
     }
   }
   .content-box {
-    flex:1;
     padding: 5px 0;
     background: #fff;
     .search-box {
@@ -195,7 +200,7 @@ export default {
     }
   }
   .content-list{
-    padding: 15px 15px 0;
+    padding: 10px 10px 0;
     li{
       margin-bottom: 10px;
       .flex();
@@ -250,7 +255,9 @@ export default {
         cursor: pointer;
         i{
           font-size: 28px;
-          color: @color-brown;
+        }
+        .download-img{
+          width: 28px;
         }
       }
     }
@@ -273,5 +280,40 @@ export default {
     .blank{
       width: 100%;
     }
+  }
+
+  .box-img{
+    margin: 0 auto;
+    width: 100%;
+    height: 70vw;
+    background-repeat: no-repeat;
+    .mask{
+      .flex();
+      justify-content: center;
+      background-color: rgba(0,0,0,.2);
+    }
+    position: relative;
+    justify-content: center;
+    .box-song-name{
+      font-size: 15px;
+      color: #fff;
+      text-align: center;
+      p{
+        &:nth-child(2){
+          margin-top: 4px;
+          font-size: 13px;
+        }
+      }
+    }
+  }
+  .download{
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    padding: 3vw 0;
+    background-image: url(../assets/botBar.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #fff;
   }
 </style>
