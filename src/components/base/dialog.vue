@@ -35,11 +35,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
+  @import 'animate.css';
   @import '~common/less/common';
 
   .dialog-content {
     .content-box {
-      box-shadow: 0 0px 24px 2px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0px 24px 2px rgba(0, 0, 0, 0.3);
       border-radius: 4px;
       position: absolute;
       left: 50%;
@@ -47,7 +48,7 @@ export default {
       width: 70vw;
       background-color: #fff;
       .translate(-50%, -50%, 0);
-      z-index:20;
+      z-index: 20;
     }
     .close{
       position: absolute;
