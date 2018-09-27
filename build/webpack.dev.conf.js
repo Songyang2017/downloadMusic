@@ -9,13 +9,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
-const express = require('express')
 const axios = require('axios')
-const app = express()
-
-var apiRoutes = express.Router()
-
-app.use('/api', apiRoutes)
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
@@ -51,8 +45,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       poll: config.dev.poll,
     },
     disableHostCheck: true,
-    before(apiRoutes) {
-      apiRoutes.get('/api/search', function (req, res) {
+    before(app) {
+      app.get('/api/search', function (req, res) {
         var url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
         axios.get(url, {
           headers: {
