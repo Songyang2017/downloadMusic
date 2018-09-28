@@ -1,12 +1,12 @@
 <template>
-  <transition name="fade">
-    <div class="dialog-content">
-      <div class="content-box">
-        <slot></slot>
-        <div class="close" @click="closeTim"><i class="iconfont icon-guanbi"></i></div>
+    <transition name="zoo">
+      <div class="content-box-d">
+          <div class="wrapper">
+            <slot></slot>
+            <div class="close" @click="closeTim"><i class="iconfont icon-guanbi"></i></div>
+          </div>
       </div>
-    </div>
-  </transition>
+    </transition>
 </template>
 
 <script>
@@ -38,28 +38,58 @@ export default {
   @import 'animate.css';
   @import '~common/less/common';
 
-  .dialog-content {
-    .content-box {
-      box-shadow: 0 0px 24px 2px rgba(0, 0, 0, 0.3);
-      border-radius: 4px;
+    .content-box-d{
       position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 70vw;
-      background-color: #fff;
-      .translate(-50%, -50%, 0);
-      z-index: 20;
-    }
-    .close{
-      position: absolute;
-      top: 5px;
-      right:5px;
-      font-size: 0;
-      z-index: 101;
-      i{
-        color: #fff;
-        font-size: 16px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: transparent;
+      .flex();
+      justify-content: center;
+      .wrapper {
+        border-radius: 4px;
+        position: relative;
+        width: 70vw;
+        box-shadow: 0 0px 24px 2px rgba(0, 0, 0, 0.4);
+        z-index: 200;
+        .close{
+          position: absolute;
+          top: 5px;
+          right:5px;
+          font-size: 0;
+          z-index: 101;
+          i{
+            color: #fff;
+            font-size: 16px;
+          }
+        }
       }
     }
-  }
+    .zoo-enter-active{
+      animation: fadein .4s;
+      .wrapper{
+        animation: zooms .4s;
+      }
+    }
+
+    @keyframes fadein {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+    @keyframes zooms {
+      0%{
+        .scale(0, 0)
+      }
+      50% {
+        .scale(1.1, 1.1)
+      }
+      100%{
+        .scale(1, 1)
+      }
+    }
 </style>

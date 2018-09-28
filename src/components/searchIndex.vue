@@ -4,7 +4,10 @@
     <div class="content-box">
       <div class="search-box">
         <i class="iconfont icon-search"></i>
-        <input type="text" autocomplete="off" v-model="query" placeholder="关键词">
+        <from action="">
+          <input type="search" ref="inputDom" autocomplete="off" v-model="query" @keydown.enter='_search' placeholder="关键词">
+          <input type="text" v-show="false"/>
+        </from>
       </div>
     </div>
     <scroll :data="result" class="wrapper-content" :pullup="true" @scrollToEnd="loadMore">
@@ -29,7 +32,7 @@
       </div>
     </scroll>
     <div class="empty-wrapper" v-show="!result.length">
-      <img class="blank" src="../assets/rabbit.png" alt="">
+      <img class="blank" src="../assets/whiteBlock.png" alt="">
     </div>
     <dia-log v-show="popShow" @closeTim="cloaeDiaLog">
       <div class="box-img" :style="{backgroundImage: 'url('+img+')'}">
@@ -42,7 +45,7 @@
   </div>
 </template>
 <script>
-import {debounce, musicDate} from 'common/js/util'
+import {musicDate} from 'common/js/util'
 import Scroll from '@/components/base/scroll'
 import diaLog from '@/components/base/dialog'
 import wxMask from '@/components/base/wxMask'
@@ -70,15 +73,6 @@ export default {
       totalnum: null
     }
   },
-  created () {
-    this.$watch('query', debounce((v) => {
-      this.page = 1
-      search(v, this.page, this.showSinger, 20).then((res) => {
-        this.result = musicDate(res.data.song.list)
-        this.totalnum = res.data.song.totalnum
-      })
-    }, 300))
-  },
   components: {
     diaLog,
     wxMask,
@@ -86,6 +80,16 @@ export default {
     headTitle
   },
   methods: {
+    _search () {
+      this.page = 1
+      search(this.query, this.page, this.showSinger, 20).then((res) => {
+        this.result = musicDate(res.data.song.list)
+        this.totalnum = res.data.song.totalnum
+      })
+      setTimeout(() => {
+        this.$refs.inputDom.blur()
+      }, 300)
+    },
     loadMore () {
       if (this.result.length === this.totalnum) {
         return
@@ -109,6 +113,10 @@ export default {
         this.getUrl(its)
         this.$refs.audio.oncanplay = () => {
           this.$refs.audio.play()
+          this.$refs.audio.addEventListener('ended', () => {
+            console.log('stop')
+            its.playStatus = false
+          })
         }
       } else {
         this.$refs.audio.pause()
@@ -287,6 +295,7 @@ export default {
     width: 100%;
     height: 70vw;
     background-repeat: no-repeat;
+    background-size: cover;
     .mask{
       .flex();
       justify-content: center;

@@ -27,12 +27,11 @@ export function musicDate (lis) {
 }
 
 export function isWexin () {
-  // let ua = navigator.userAgent.toLowerCase()
-  // let isWeixin = ua.indexOf('micromessenger') !== -1
-  // if (isWeixin) {
-  //   return true
-  // } else {
-  //   return false
-  // }
-  return false
+  let ua = navigator.userAgent.toLowerCase()
+  let isWeixin = ua.indexOf('micromessenger') !== -1
+  if (isWeixin) {
+    return true
+  } else {
+    return false
+  }
 }
