@@ -4,10 +4,10 @@
     <div class="content-box">
       <div class="search-box">
         <i class="iconfont icon-search"></i>
-        <from action="">
+        <form action="">
           <input type="search" ref="inputDom" autocomplete="off" v-model="query" @keydown.enter='_search' placeholder="关键词">
           <input type="text" v-show="false"/>
-        </from>
+        </form>
       </div>
     </div>
     <scroll :data="result" class="wrapper-content" :pullup="true" @scrollToEnd="loadMore">
