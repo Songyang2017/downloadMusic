@@ -1,13 +1,13 @@
 <template>
   <div class="box-wrapper">
-    <head-title title="MinMus - 随心而动"></head-title>
+    <headTitle title="MinMus - 随心而动"></headTitle>
     <div class="content-box">
       <div class="search-box">
         <i class="iconfont icon-search"></i>
-        <from action="">
+        <form action="">
           <input type="search" ref="inputDom" autocomplete="off" v-model="query" @keydown.enter='_search' placeholder="关键词">
           <input type="text" v-show="false"/>
-        </from>
+        </form>
       </div>
     </div>
     <scroll :data="result" class="wrapper-content" :pullup="true" @scrollToEnd="loadMore">
@@ -73,12 +73,6 @@ export default {
       totalnum: null
     }
   },
-  components: {
-    diaLog,
-    wxMask,
-    Scroll,
-    headTitle
-  },
   methods: {
     _search () {
       this.page = 1
@@ -111,13 +105,14 @@ export default {
       its.playStatus = !its.playStatus
       if (its.playStatus) {
         this.getUrl(its)
-        this.$refs.audio.oncanplay = () => {
+        setTimeout(() => {
           this.$refs.audio.play()
+          console.log('play')
           this.$refs.audio.addEventListener('ended', () => {
             console.log('stop')
             its.playStatus = false
           })
-        }
+        }, 800)
       } else {
         this.$refs.audio.pause()
       }
@@ -127,8 +122,10 @@ export default {
       getVkey(its.songmid).then((res) => {
         var vkey = res.data.items[0].vkey
         var filename = res.data.items[0].filename
+        // 如果vkey存在，说明曲库中有该歌曲
         if (vkey) {
           var url = `http://dl.stream.qqmusic.qq.com/${filename}?vkey=${vkey}&guid=7748797702&uin=1546302993&fromtag=66`
+          // 如果参数down存在且为true，说明点的是下载图标
           if (down) {
             this.downUrl = url
             this.img = its.img
@@ -150,6 +147,12 @@ export default {
     cloaeDiaLog () {
       this.popShow = false
     }
+  },
+  components: {
+    diaLog,
+    wxMask,
+    Scroll,
+    headTitle
   }
 }
 </script>
