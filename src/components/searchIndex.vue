@@ -40,7 +40,6 @@
       </div>
       <a :href="downUrl" :download="fileName" class="download">下&nbsp;载</a>
     </dia-log>
-    <wx-mask></wx-mask>
     <audio ref="audio" :src="vkeyUrl"></audio>
   </div>
 </template>
@@ -48,7 +47,6 @@
 import {musicDate} from 'common/js/util'
 import Scroll from '@/components/base/scroll'
 import diaLog from '@/components/base/dialog'
-import wxMask from '@/components/base/wxMask'
 import headTitle from '@/components/headTitle'
 import {search} from 'api/search'
 import {getVkey} from 'api/vkey'
@@ -150,7 +148,6 @@ export default {
   },
   components: {
     diaLog,
-    wxMask,
     Scroll,
     headTitle
   }
