@@ -35,3 +35,16 @@ export function isWexin () {
     return false
   }
 }
+
+export function copy () {
+  const input = document.createElement('input')
+  input.setAttribute('readonly', 'readonly')
+  input.setAttribute('value', 'wTQjEC16of')
+  document.body.appendChild(input)
+  input.setSelectionRange(0, 9999)
+  if (document.execCommand('copy')) {
+    document.execCommand('copy')
+    console.log('copy success')
+  }
+  document.body.removeChild(input)
+}
