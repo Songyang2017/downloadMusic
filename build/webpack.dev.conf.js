@@ -10,6 +10,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 const axios = require('axios')
+const mysql = require('mysql')
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
@@ -59,12 +60,31 @@ const devWebpackConfig = merge(baseWebpackConfig, {
             if (typeof ret === 'string') {
             var reg = /^\w+\(({.+})\)$/
             var matches = ret.match(reg)
-            if (matches) {
+            if (matches == null) {
               ret = JSON.parse(matches[1])
             }
           }
           res.json(ret)
         })
+      })
+      //连接数据库
+      let connection = mysql.createConnection({
+        host     : 'localhost',
+        user     : 'root',
+        password : '',
+        database: 'ws',
+        port:3306
+      })
+      connection.connect()
+      // console.log('connection', connection)
+      let creatTable = 'create table if not exists articleList(art_id int primary KEY AUTO_INCREMENT, art_title text, art_date int, art_content text)'
+      connection.query(creatTable, function(err, rows, fields){
+
+      })
+
+      connection.end()
+      app.post('/postList', function(req, res) {
+        console.log(res)
       })
     }
   },
